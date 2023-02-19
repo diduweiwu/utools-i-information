@@ -1,14 +1,15 @@
 <script>
 import {darkTheme, useOsTheme} from "naive-ui";
-import {computed} from "vue";
-
+import {computed, ref} from "vue";
+import ReadHub from "./components/ReadHub.vue";
 
 export default {
+  components: { ReadHub},
   setup() {
-
     const osThemeRef = useOsTheme();
-
+    const loading = ref(false)
     return {
+      loading,
       theme: computed(() => osThemeRef.value === "dark" ? darkTheme : null),
     }
   }
@@ -21,12 +22,14 @@ export default {
       <n-layout position="absolute">
         <n-layout-header style="height: 50px;" bordered>
           <n-space justify="space-between" align="center" style="height: 50px;padding:0 10px">
-            功能区域
+            <n-tag checked checkable>ReadHub</n-tag>
           </n-space>
         </n-layout-header>
         <n-layout has-sider position="absolute" style="top: 60px">
           <n-layout content-style="padding: 5px 10px;" :native-scrollbar="false">
-            内容区域
+            <n-spin :show="loading" style="min-height: 300px">
+              <ReadHub v-model:loading="loading"/>
+            </n-spin>
           </n-layout>
         </n-layout>
       </n-layout>

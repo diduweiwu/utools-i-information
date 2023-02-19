@@ -8,16 +8,15 @@
   "logo": "logo.png",
   "features": [
     {
-      "code": "密码盒",
-      "explain": "密码管理盒子",
+      "code": "爱资讯",
+      "explain": "看看资讯，关心一下窗外的世界~",
       "cmds": [
-        "password",
-        "pass",
-        "keep",
-        "secret",
+        "information",
+        "news",
+        "资讯",
         {
           "type": "over",
-          "label": "密码盒",
+          "label": "爱资讯",
           "minLength": 1,
           "maxLength": 20
         }

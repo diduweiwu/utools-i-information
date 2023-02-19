@@ -6,7 +6,3 @@ const fs = require('fs')
 window.welcome = () => {
     console.log('welcome')
 }
-
-
-
-

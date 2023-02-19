@@ -5,3 +5,6 @@
 其他详细的用法等空了更新......
 ```
 
+```text
+感谢免费商用logo作者： https://www.iconfinder.com/icons/5027874/document_file_newspaper_paper_icon
+```
