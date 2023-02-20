@@ -1,21 +1,25 @@
 <template>
   <n-list hoverable clickable>
-    <n-list-item :key="item.uid" v-for="(item,index) in news" align="left" @click="()=>showContent(item)">
+    <n-list-item :key="item.uid" v-for="(item,index) in news" align="left" @click.stop="()=>showContent(item)">
       <template #prefix>
-        <n-space justify="center">
-          <n-tag type="primary" size="small">
-            {{ toDateTimeStr(item['createdAt']) }}
+        <n-space justify="center" align="center">
+          <n-tag type="primary" round size="small">
+            {{ index + 1 }}
           </n-tag>
         </n-space>
       </template>
       <n-space vertical>
-        <n-space justify="start">
+        <n-space justify="start" vertical>
+          <n-tag type="info" size="small" class="cursor-pointer">{{ toDateTimeStr(item['createdAt']) }}</n-tag>
           <n-text class="cursor-pointer">{{ item['title'] }}</n-text>
         </n-space>
       </n-space>
       <template #suffix>
         <n-space>
-          <n-button size="tiny" @click.stop="()=>openOriginLink(item['uid'])">详情</n-button>
+          <n-button title="浏览器打开" :focusable="false" size="small" ghost
+                    @click.stop="()=>openOriginLink(item['uid'])">
+            <n-icon :component="OpenInBrowserRound"/>
+          </n-button>
         </n-space>
       </template>
     </n-list-item>
@@ -28,10 +32,11 @@ import {onMounted, ref} from "vue";
 import axios from "axios";
 import {toDateTimeStr} from "../js/useDate.js";
 import DetailDrawer from "/src/components/DetailDrawer.vue";
+import {OpenInBrowserRound} from "@vicons/material";
 
 export default {
   name: "ReadHub",
-  components: {DetailDrawer},
+  components: {DetailDrawer, OpenInBrowserRound},
   props: {
     loading: {type: Boolean, default: false},
   },
@@ -64,6 +69,7 @@ export default {
       showContent,
       DetailDrawer,
       openOriginLink,
+      OpenInBrowserRound,
     }
   }
 }

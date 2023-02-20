@@ -18,6 +18,7 @@ import {
     NSpin,
     NTag,
     NText,
+    NIcon,
 } from 'naive-ui'
 
 const naive = create({
@@ -33,6 +34,7 @@ const naive = create({
         NSpin,
         NTag,
         NText,
+        NIcon,
         NEllipsis,
         NDrawer,
         NDrawerContent,
