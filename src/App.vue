@@ -5,11 +5,12 @@ import ReadHub from "./components/ReadHub.vue";
 import WeiboHot from "./components/WeiboHot.vue";
 import {fetchConfig, fetchSources, updateConfig} from "./js/useConfig.js";
 import {REFRESH_EVENT} from "./js/useEvent.js";
-import {RefreshSharp} from "@vicons/material";
+import {InfoOutlined, RefreshSharp} from "@vicons/material";
+import About from "./components/about/About.vue";
 
 
 export default {
-  components: {WeiboHot, ReadHub},
+  components: {About, WeiboHot, ReadHub},
   setup() {
     const osThemeRef = useOsTheme();
     const loading = ref(false)
@@ -30,7 +31,7 @@ export default {
       sources,
       switchSource,
       triggerUpdate,
-      RefreshSharp,
+      RefreshSharp, InfoOutlined,
       theme: computed(() => osThemeRef.value === "dark" ? darkTheme : null),
     }
   }
@@ -48,13 +49,21 @@ export default {
                      :checked="source['name']===config.source?.name">{{ source['title'] }}
               </n-tag>
             </n-space>
-            <n-button title="刷新" :disabled="loading" :focusable="false" text @click="triggerUpdate">
-              <n-icon size="20px" :component="RefreshSharp"/>
-            </n-button>
+            <n-space>
+              <n-button title="刷新" :disabled="loading" :focusable="false" text @click="triggerUpdate">
+                <n-icon size="20px" :component="RefreshSharp"/>
+              </n-button>
+
+              <n-button title="关于" :disabled="loading" :focusable="false" text @click="()=>$refs.about.show()">
+                <n-icon size="20px" :component="InfoOutlined"/>
+              </n-button>
+
+            </n-space>
           </n-space>
         </n-layout-header>
         <n-layout has-sider position="absolute" style="top: 60px">
           <n-layout content-style="padding: 5px 10px;" :native-scrollbar="false">
+            <About ref="about"/>
             <n-spin :show="loading" description="努力加载中~" style="min-height: 300px">
               <ReadHub v-if="config.source?.name==='readhub'" v-model:loading="loading"/>
               <WeiboHot v-if="config.source?.name==='weibohot'" v-model:loading="loading"/>
