@@ -1,8 +1,6 @@
-const fs = require('fs')
+const mitt = require('mitt')
 
 /**
  * 全局函数(preload种可以调用electron/node函数)
  */
-window.welcome = () => {
-    console.log('welcome')
-}
+window.mitt = mitt()

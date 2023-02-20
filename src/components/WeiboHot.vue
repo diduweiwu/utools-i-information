@@ -36,6 +36,7 @@ import {toDateTimeStr} from "../js/useDate.js";
 import DetailDrawer from "/src/components/DetailDrawer.vue";
 import {OpenInBrowserRound} from "@vicons/material";
 import nzh from "nzh/cn";
+import {REFRESH_EVENT} from "../js/useEvent.js";
 
 export default {
   name: "WeiboHot",
@@ -63,7 +64,10 @@ export default {
 
     const openOriginLink = (wordScheme) => utools.shellOpenExternal(`https://s.weibo.com/weibo?q=${encodeURIComponent(wordScheme)}`)
 
-    onMounted(reload)
+    onMounted(() => {
+      reload()
+      mitt.on(REFRESH_EVENT, reload)
+    })
 
     return {
       news,

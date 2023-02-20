@@ -33,6 +33,7 @@ import axios from "axios";
 import {toDateTimeStr} from "../js/useDate.js";
 import DetailDrawer from "/src/components/DetailDrawer.vue";
 import {OpenInBrowserRound} from "@vicons/material";
+import {REFRESH_EVENT} from "../js/useEvent.js";
 
 export default {
   name: "ReadHub",
@@ -60,7 +61,10 @@ export default {
 
     const openOriginLink = (uid) => utools.shellOpenExternal(`https://readhub.cn/topic/${uid}`)
 
-    onMounted(reload)
+    onMounted(() => {
+      reload()
+      mitt.on(REFRESH_EVENT, reload)
+    })
 
     return {
       news,

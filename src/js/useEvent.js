@@ -1,0 +1,1 @@
+export const REFRESH_EVENT = 'REFRESH_EVENT'
