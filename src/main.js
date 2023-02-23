@@ -19,6 +19,7 @@ import {
     NTag,
     NText,
     NIcon,
+    NResult,
 } from 'naive-ui'
 
 const naive = create({
@@ -35,6 +36,7 @@ const naive = create({
         NTag,
         NText,
         NIcon,
+        NResult,
         NEllipsis,
         NDrawer,
         NDrawerContent,

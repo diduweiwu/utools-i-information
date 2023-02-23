@@ -4,13 +4,19 @@ import {computed, ref} from "vue";
 import ReadHub from "./components/ReadHub.vue";
 import WeiboHot from "./components/WeiboHot.vue";
 import {fetchConfig, fetchSources, updateConfig} from "./js/useConfig.js";
-import {REFRESH_EVENT} from "./js/useEvent.js";
+import {emitter, REFRESH_EVENT} from "./js/useEvent.js";
 import {InfoOutlined, RefreshSharp} from "@vicons/material";
 import About from "./components/about/About.vue";
+import CommonNews from "./components/CommonNews.vue";
+import axios from "axios";
+import OpenSourceNews from "./components/OpenSourceNews.vue";
+import OpenSourceSoftwareUpdateNews from "./components/OpenSourceSoftwareUpdateNews.vue";
+import BiliBiliHot from "./components/BiliBiliHot.vue";
 
 
 export default {
-  components: {About, WeiboHot, ReadHub},
+  methods: {axios},
+  components: {BiliBiliHot, OpenSourceSoftwareUpdateNews, OpenSourceNews, CommonNews, About, WeiboHot, ReadHub},
   setup() {
     const osThemeRef = useOsTheme();
     const loading = ref(false)
@@ -22,7 +28,7 @@ export default {
       updateConfig(config.value)
     }
 
-    const triggerUpdate = () => mitt.emit(REFRESH_EVENT)
+    const triggerUpdate = () => emitter.emit(REFRESH_EVENT)
 
 
     return {
@@ -65,7 +71,10 @@ export default {
           <n-layout content-style="padding: 5px 10px;" :native-scrollbar="false">
             <About ref="about"/>
             <n-spin :show="loading" description="努力加载中~" style="min-height: 300px">
+              <BiliBiliHot v-if="config.source?.name==='bilibiliHot'" v-model:loading="loading"/>
               <ReadHub v-if="config.source?.name==='readhub'" v-model:loading="loading"/>
+              <OpenSourceNews v-if="config.source?.name==='opensourceNews'" v-model:loading="loading"/>
+              <OpenSourceSoftwareUpdateNews v-if="config.source?.name==='opensourceSoftwareUpdateNews'" v-model:loading="loading"/>
               <WeiboHot v-if="config.source?.name==='weibohot'" v-model:loading="loading"/>
             </n-spin>
           </n-layout>

@@ -1,26 +1,23 @@
 <template>
   <n-list hoverable clickable>
-    <n-list-item :key="item.uid" v-for="(item,index) in news" align="left" @click.stop="()=>showContent(item)">
+    <n-list-item :key="item.title" v-for="(item,index) in news" align="left"
+                 @click.stop="()=>openOriginLink(item['link'])">
       <template #prefix>
         <n-space justify="center" align="center">
-          <n-tag type="primary" round size="small">
+          <n-tag type="default" round size="small">
             {{ index + 1 }}
           </n-tag>
         </n-space>
       </template>
       <n-space vertical>
         <n-space justify="start" vertical>
-          <n-tag type="info" size="small" class="cursor-pointer">{{ toDateTimeStr(item['createdAt']) }}</n-tag>
-          <n-text class="cursor-pointer">{{ item['title'] }}</n-text>
+          <div>
+            <n-text class="cursor-pointer">{{ item['title'] }}</n-text>
+          </div>
         </n-space>
       </n-space>
       <template #suffix>
-        <n-space>
-          <n-button title="浏览器打开" :focusable="false" size="small" ghost
-                    @click.stop="()=>openOriginLink(item['uid'])">
-            <n-icon :component="OpenInBrowserRound"/>
-          </n-button>
-        </n-space>
+
       </template>
     </n-list-item>
   </n-list>
@@ -29,30 +26,36 @@
 
 <script>
 import {onMounted, ref} from "vue";
-import axios from "axios";
 import {toDateTimeStr} from "../js/useDate.js";
 import DetailDrawer from "/src/components/DetailDrawer.vue";
 import {OpenInBrowserRound} from "@vicons/material";
 import {emitter, REFRESH_EVENT} from "../js/useEvent.js";
+import {useMessage} from "naive-ui";
 
 export default {
-  name: "ReadHub",
+  name: "CommonNews",
   components: {DetailDrawer, OpenInBrowserRound},
   props: {
     loading: {type: Boolean, default: false},
+    newsApi: {type: Function, default: null},
+    newsExtractor: {type: Function, default: null},
   },
   emits: ['update:loading'],
   setup(props, ctx) {
     // https://api.readhub.cn/topic/list?size=50
     const news = ref([])
+    const {newsApi, newsExtractor} = props
+    const {error} = useMessage()
     const reload = () => {
+      if (!newsApi) {
+        return error('未配置新闻源')
+      }
+
       ctx.emit('update:loading', true)
+
       news.value = []
-      axios.get('https://api.readhub.cn/topic/list?size=50')
-          .then(res => {
-            const {items} = res.data.data
-            news.value = items || []
-          })
+      newsApi().then(res => news.value = newsExtractor(res))
+          .catch(e => alert(e))
           .finally(() => ctx.emit('update:loading', false))
     }
     const detailDrawer = ref()
@@ -60,7 +63,7 @@ export default {
       detailDrawer.value.show({title: item['title'], content: item['summary']})
     }
 
-    const openOriginLink = (uid) => utools.shellOpenExternal(`https://readhub.cn/topic/${uid}`)
+    const openOriginLink = (link) => utools.shellOpenExternal(link)
 
     onMounted(() => {
       reload()

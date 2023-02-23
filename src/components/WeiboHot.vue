@@ -35,8 +35,7 @@ import axios from "axios";
 import {toDateTimeStr} from "../js/useDate.js";
 import DetailDrawer from "/src/components/DetailDrawer.vue";
 import {OpenInBrowserRound} from "@vicons/material";
-import nzh from "nzh/cn";
-import {REFRESH_EVENT} from "../js/useEvent.js";
+import {emitter, REFRESH_EVENT} from "../js/useEvent.js";
 
 export default {
   name: "WeiboHot",
@@ -50,10 +49,11 @@ export default {
     const news = ref([])
     const reload = () => {
       ctx.emit('update:loading', true)
+      news.value = []
       axios.get('https://weibo.com/ajax/side/hotSearch')
           .then(res => {
             const {realtime: items} = res.data.data
-            news.value = items || []
+            news.value = (items || []).filter(n=>!!n['word_scheme'])
           })
           .finally(() => ctx.emit('update:loading', false))
     }
@@ -66,7 +66,7 @@ export default {
 
     onMounted(() => {
       reload()
-      mitt.on(REFRESH_EVENT, reload)
+      emitter.on(REFRESH_EVENT, reload)
     })
 
     return {
@@ -77,7 +77,6 @@ export default {
       DetailDrawer,
       openOriginLink,
       OpenInBrowserRound,
-      nzh,
     }
   }
 }

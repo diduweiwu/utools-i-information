@@ -16,10 +16,21 @@ export function fetchSources() {
         {
             title: '微博热搜',
             name: 'weibohot',
+        }, {
+            title: 'B站热门',
+            name: 'bilibiliHot',
         },
         {
             title: 'ReadHub',
             name: 'readhub',
+        },
+        {
+            title: '开源资讯',
+            name: 'opensourceNews',
+        },
+        {
+            title: '软件资讯',
+            name: 'opensourceSoftwareUpdateNews',
         }
     ]
 }
