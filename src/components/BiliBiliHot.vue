@@ -1,5 +1,14 @@
 <template>
-  <CommonNews :news-api="fetchNews" :news-extractor="newsExtractor"/>
+  <CommonNews :news-api="fetchNews" :news-extractor="newsExtractor">
+    <template #content_extra="news">
+      <n-space justify="start">
+        <n-tag size="small" type="info" round>硬币: {{ news['item']['origin']['stat']['coin'] }}</n-tag>
+        <n-tag size="small" type="info" round>观看: {{ news['item']['origin']['stat']['view'] }}</n-tag>
+        <n-tag size="small" type="info" round>分享: {{ news['item']['origin']['stat']['share'] }}</n-tag>
+        <n-tag size="small" type="info" round>喜欢: {{ news['item']['origin']['stat']['like'] }}</n-tag>
+      </n-space>
+    </template>
+  </CommonNews>
 </template>
 
 <script>
@@ -18,10 +27,16 @@ export default {
     )
     const newsExtractor = (body) => {
       const lists = body.data?.list || []
-      return lists.map(news => ({
-        title: news['title'],
-        link: news['short_link']
-      }))
+
+      return lists.map(news => {
+
+        return {
+          title: news['title'],
+          link: news['short_link'],
+          imgSrc: news['pic'],
+          origin: news,
+        }
+      })
     }
     return {
       fetchNews,

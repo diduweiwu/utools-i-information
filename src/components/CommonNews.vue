@@ -3,25 +3,24 @@
     <n-list-item :key="item.title" v-for="(item,index) in news" align="left"
                  @click.stop="()=>openOriginLink(item['link'])">
       <template #prefix>
-        <n-space justify="center" align="center">
-          <n-tag type="default" round size="small">
+        <slot name="prefix" :item="item" :index="index">
+          <n-text :type="index<=2?'error':'warning'" strong style="font-size: larger">
             {{ index + 1 }}
-          </n-tag>
-        </n-space>
+          </n-text>
+        </slot>
       </template>
-      <n-space vertical>
+      <n-space align="center">
+        <img v-if="item['imgSrc']" width="100" :src="imgMap[item['imgSrc']]">
         <n-space justify="start" vertical>
-          <div>
-            <n-text class="cursor-pointer">{{ item['title'] }}</n-text>
-          </div>
+          <n-text strong style="font-size: 17px" class="cursor-pointer">{{ item['title'] }}</n-text>
+          <slot name="content_extra" :item="item"/>
         </n-space>
       </n-space>
       <template #suffix>
-
+        <slot name="suffix" :item="item"/>
       </template>
     </n-list-item>
   </n-list>
-  <DetailDrawer ref="detailDrawer"/>
 </template>
 
 <script>
@@ -46,6 +45,9 @@ export default {
     const news = ref([])
     const {newsApi, newsExtractor} = props
     const {error} = useMessage()
+
+    const imgMap = ref({})
+
     const reload = () => {
       if (!newsApi) {
         return error('未配置新闻源')
@@ -54,13 +56,20 @@ export default {
       ctx.emit('update:loading', true)
 
       news.value = []
-      newsApi().then(res => news.value = newsExtractor(res))
+      imgMap.value = {}
+
+      newsApi().then(res => {
+        news.value = newsExtractor(res)
+        for (let i = 0; i < news.value.length; i++) {
+          const imgSrc = news.value[i]['imgSrc']
+          if (!imgSrc) {
+            continue
+          }
+          downloadImage(imgSrc).then(result => imgMap.value[imgSrc] = result['fileSrc'])
+        }
+      })
           .catch(e => alert(e))
           .finally(() => ctx.emit('update:loading', false))
-    }
-    const detailDrawer = ref()
-    const showContent = (item) => {
-      detailDrawer.value.show({title: item['title'], content: item['summary']})
     }
 
     const openOriginLink = (link) => utools.shellOpenExternal(link)
@@ -72,12 +81,10 @@ export default {
 
     return {
       news,
-      toDateTimeStr,
-      detailDrawer,
-      showContent,
       DetailDrawer,
       openOriginLink,
       OpenInBrowserRound,
+      imgMap,
     }
   }
 }

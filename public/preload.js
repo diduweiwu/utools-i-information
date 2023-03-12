@@ -1,4 +1,8 @@
 const https = require("https");
+const http = require("http");
+const crypto = require("crypto");
+const fs = require("fs");
+const urlParser = require('url');
 
 /**
  * 全局函数(preload种可以调用electron/node函数)
@@ -24,21 +28,6 @@ window.fetchJsonHttps = (host, path, config = {}) => new Promise((resolve) => {
     }
 )
 
-
-const fetchHost = (url) => {
-    // 默认组装Referer header头
-    let domainType = ".cn"
-    if (url.indexOf(".com") > -1) {
-        domainType = ".com"
-    }
-
-    const [host, path] = url.split(domainType)
-    return {
-        host: `${host}${domainType}`
-        , path
-    }
-}
-
 function fetchSuffix(url) {
     const urlSegments = url.split(".")
     let fileSuffix = urlSegments[urlSegments.length - 1]
@@ -50,15 +39,11 @@ function fetchSuffix(url) {
 }
 
 const fetchFile = (url, filePath, config) => {
-    const {host, path} = fetchHost(url)
+    const {host, path} = urlParser.parse(url)
     const request = url.startsWith('https') ? https : http
 
     return new Promise(resolve => request.get({
-        host:
-
-            `${host.replace('https://', '').replace('http://', '')}`
-
-        ,
+        host: `${host.replace('https://', '').replace('http://', '')}`,
         path: path,
         method: 'get',
         headers: config['headers'] || {}
@@ -86,23 +71,16 @@ const getFileSize = (filePath) => {
 
 window.composeFilePath = (url) => {
     // 文件名采用随机方式，避免文件冲突
-    let fileName =
-
-        `${crypto.createHash('md5').update(url).digest('hex')}`
-
+    let fileName = `${crypto.createHash('md5').update(url).digest('hex')}`
 
     let fileSuffix = fetchSuffix(url)
     // 组装文件路径,需要将文件后缀拼接上
-    return
-
-    `${utools.getPath("temp")}/${fileName}.${fileSuffix}`
-
-
+    return `${utools.getPath("temp")}/${fileName}.${fileSuffix}`
 }
 
 window.downloadImage = async (url, config = {}) => {
     // 默认组装Referer header头
-    const {host} = fetchHost(url)
+    const {host} = urlParser.parse(url)
     config = Object.assign({'headers': {'Referer': host}, ...config})
 
     // 组装文件路径,需要将文件后缀拼接上
@@ -124,8 +102,6 @@ window.downloadImage = async (url, config = {}) => {
 
     return {
         imgSrc: url,
-        fileSrc:
-
-            `file://${filePath}`,
+        fileSrc: `file://${filePath}`,
     }
 }

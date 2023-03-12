@@ -1,82 +1,48 @@
 <template>
-  <n-list hoverable clickable>
-    <n-list-item :key="item.uid" v-for="(item,index) in news" align="left"
-                 @click.stop="()=>openOriginLink(item['word_scheme'])">
-      <template #prefix>
-        <n-space justify="center" align="center">
-          <n-tag type="default" round size="small">
-            {{ index + 1 }}
-          </n-tag>
-        </n-space>
-      </template>
-      <n-space vertical>
-        <n-space justify="start" vertical>
-          <div>
-            <n-text class="cursor-pointer">{{ item['word'] }}</n-text>
-          </div>
-        </n-space>
-      </n-space>
-      <template #suffix>
-        <n-space>
-          <n-tag v-if="item['icon_desc']" type="info" size="small"
-                 :color="{textColor:'#ffffff',color:item['icon_desc_color']}">
-            {{ item['icon_desc'] }}
-          </n-tag>
-        </n-space>
-      </template>
-    </n-list-item>
-  </n-list>
-  <DetailDrawer ref="detailDrawer"/>
+  <CommonNews :news-api="fetchNews" :news-extractor="newsExtractor">
+    <template #suffix="{item}">
+      <n-tag v-if="item['icon_desc']" type="info" size="small"
+             :color="{textColor:'#ffffff',color:item['icon_desc_color']}">
+        {{ item['icon_desc'] }}
+      </n-tag>
+    </template>
+  </CommonNews>
 </template>
 
 <script>
-import {onMounted, ref} from "vue";
 import axios from "axios";
-import {toDateTimeStr} from "../js/useDate.js";
 import DetailDrawer from "/src/components/DetailDrawer.vue";
+import CommonNews from "/src/components/CommonNews.vue";
 import {OpenInBrowserRound} from "@vicons/material";
-import {emitter, REFRESH_EVENT} from "../js/useEvent.js";
 
 export default {
   name: "WeiboHot",
-  components: {DetailDrawer, OpenInBrowserRound},
+  components: {DetailDrawer, CommonNews, OpenInBrowserRound},
   props: {
     loading: {type: Boolean, default: false},
   },
   emits: ['update:loading'],
   setup(props, ctx) {
     // https://api.readhub.cn/topic/list?size=50
-    const news = ref([])
-    const reload = () => {
-      ctx.emit('update:loading', true)
-      news.value = []
-      axios.get('https://weibo.com/ajax/side/hotSearch')
-          .then(res => {
-            const {realtime: items} = res.data.data
-            news.value = (items || []).filter(n=>!!n['word_scheme'])
-          })
-          .finally(() => ctx.emit('update:loading', false))
-    }
-    const detailDrawer = ref()
-    const showContent = (item) => {
-      detailDrawer.value.show({title: item['title'], content: item['summary']})
-    }
+    const fetchNews = () => axios.get('https://weibo.com/ajax/side/hotSearch')
 
-    const openOriginLink = (wordScheme) => utools.shellOpenExternal(`https://s.weibo.com/weibo?q=${encodeURIComponent(wordScheme)}`)
+    const newsExtractor = (body) => {
+      const {realtime: items} = body.data.data
 
-    onMounted(() => {
-      reload()
-      emitter.on(REFRESH_EVENT, reload)
-    })
+      return (items || []).filter(n => !!n['word_scheme'])
+          .map(item => ({
+            icon_desc: item['icon_desc'],
+            icon_desc_color: item['icon_desc_color'],
+            title: item['note'],
+            summary: item['summary'],
+            link: `https://s.weibo.com/weibo?q=${encodeURIComponent(item['word_scheme'])}`
+          }))
+    }
 
     return {
-      news,
-      toDateTimeStr,
-      detailDrawer,
-      showContent,
-      DetailDrawer,
-      openOriginLink,
       OpenInBrowserRound,
+      fetchNews,
+      newsExtractor,
     }
   }
 }

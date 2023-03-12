@@ -20,6 +20,7 @@ import {
     NText,
     NIcon,
     NResult,
+    NDivider,
 } from 'naive-ui'
 
 const naive = create({
@@ -37,6 +38,7 @@ const naive = create({
         NText,
         NIcon,
         NResult,
+        NDivider,
         NEllipsis,
         NDrawer,
         NDrawerContent,

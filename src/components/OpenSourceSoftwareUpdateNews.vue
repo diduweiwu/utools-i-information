@@ -16,8 +16,17 @@ export default {
       extractNews: (res) => {
         const $ = cheerio.load(res.data)
         const newsLinks = $('.news-item-hover')
-        return newsLinks.map((_, news) => ({title: $(news).find('.title').text(), link: news.attribs['data-url']}))
 
+        return newsLinks.map((_, news) => {
+
+              const imgAttribs = $(news).find('img')[0]?.attribs || {}
+              return {
+                title: $(news).find('.title').text(),
+                imgSrc: imgAttribs['data-src'],
+                link: news.attribs['data-url']
+              }
+            }
+        )
       }
     }
   }
