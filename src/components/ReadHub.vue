@@ -6,8 +6,8 @@
       </n-text>
     </template>
     <template #suffix="{item}">
-      <n-button :focusable="false" round @click.stop="()=>showContent(item)" ghost size="large">
-        概要
+      <n-button :focusable="false" round @click.stop="()=>showContent(item)" ghost>
+        详情
       </n-button>
     </template>
   </CommonNews>
@@ -46,7 +46,14 @@ export default {
 
     const detailDrawer = ref()
     const showContent = (item) => {
-      detailDrawer.value.show({title: item['title'], content: item['summary']})
+      // https://api.readhub.cn/topic/instantview?topicId=8o8ZpsUbcSh
+      const {uid} = item
+      detailDrawer.value.show(() => axios.get(`https://api.readhub.cn/topic/instantview?topicId=${uid}`)
+          .then(res => {
+            const {title, content} = res.data
+            return {title, content}
+          })
+      )
     }
 
     return {

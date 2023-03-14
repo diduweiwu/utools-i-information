@@ -1,11 +1,19 @@
 <template>
   <CommonNews :news-api="fetchNews" :news-extractor="newsExtractor">
-    <template #content_extra="news">
+    <template #title_extra="news">
       <n-space justify="start">
+        <n-tag size="small" type="info" round>UP: {{ news['item']['origin']['owner']['name'] }}</n-tag>
         <n-tag size="small" type="info" round>硬币: {{ news['item']['origin']['stat']['coin'] }}</n-tag>
         <n-tag size="small" type="info" round>观看: {{ news['item']['origin']['stat']['view'] }}</n-tag>
         <n-tag size="small" type="info" round>分享: {{ news['item']['origin']['stat']['share'] }}</n-tag>
         <n-tag size="small" type="info" round>喜欢: {{ news['item']['origin']['stat']['like'] }}</n-tag>
+      </n-space>
+    </template>
+    <template #content_extra="news">
+      <n-space vertical v-if="news['item']['origin']['desc']">
+        <n-alert>
+          {{ news['item']['origin']['desc'] }}
+        </n-alert>
       </n-space>
     </template>
   </CommonNews>

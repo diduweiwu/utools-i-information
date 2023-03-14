@@ -3,21 +3,33 @@
     <n-list-item :key="item.title" v-for="(item,index) in news" align="left"
                  @click.stop="()=>openOriginLink(item['link'])">
       <template #prefix>
-        <slot name="prefix" :item="item" :index="index">
-          <n-text :type="index<=2?'error':'warning'" strong style="font-size: larger">
-            {{ index + 1 }}
-          </n-text>
-        </slot>
+        <div style="width: 20px">
+          <slot name="prefix" :item="item" :index="index">
+            <n-text :type="index<=2?'error':'warning'" strong style="font-size: larger">
+              {{ index + 1 }}
+            </n-text>
+          </slot>
+        </div>
       </template>
-      <n-space align="center">
-        <img v-if="item['imgSrc']" width="100" :src="imgMap[item['imgSrc']]">
+
+      <n-space vertical>
+        <n-space justify="start" align="center">
+          <slot name="img">
+            <img v-if="item['imgSrc']" width="100" :src="imgMap[item['imgSrc']]">
+          </slot>
+          <n-space vertical>
+            <n-text strong style="font-size: 17px" class="cursor-pointer">{{ item['title'] }}</n-text>
+            <slot name="title_extra" :item="item"/>
+          </n-space>
+        </n-space>
         <n-space justify="start" vertical>
-          <n-text strong style="font-size: 17px" class="cursor-pointer">{{ item['title'] }}</n-text>
           <slot name="content_extra" :item="item"/>
         </n-space>
       </n-space>
       <template #suffix>
-        <slot name="suffix" :item="item"/>
+        <div style="max-width: 100px">
+          <slot name="suffix" :item="item"/>
+        </div>
       </template>
     </n-list-item>
   </n-list>
@@ -25,7 +37,6 @@
 
 <script>
 import {onMounted, ref} from "vue";
-import {toDateTimeStr} from "../js/useDate.js";
 import DetailDrawer from "/src/components/DetailDrawer.vue";
 import {OpenInBrowserRound} from "@vicons/material";
 import {emitter, REFRESH_EVENT} from "../js/useEvent.js";
