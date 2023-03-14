@@ -3,13 +3,13 @@
     <n-list-item :key="item.title" v-for="(item,index) in news" align="left"
                  @click.stop="()=>openOriginLink(item['link'])">
       <template #prefix>
-        <div style="width: 20px">
+        <n-space vertical style="width: 20px">
           <slot name="prefix" :item="item" :index="index">
-            <n-text :type="index<=2?'error':'warning'" strong style="font-size: larger">
+            <n-text :type="index<=2?'error':'warning'" strong style="font-size: 17px">
               {{ index + 1 }}
             </n-text>
           </slot>
-        </div>
+        </n-space>
       </template>
 
       <n-space vertical>
@@ -22,9 +22,7 @@
             <slot name="title_extra" :item="item"/>
           </n-space>
         </n-space>
-        <n-space justify="start" vertical>
-          <slot name="content_extra" :item="item"/>
-        </n-space>
+        <slot name="content_extra" :item="item"/>
       </n-space>
       <template #suffix>
         <div style="max-width: 100px">
