@@ -10,11 +10,9 @@
       </n-space>
     </template>
     <template #content_extra="news">
-      <n-space vertical v-if="news['item']['origin']['desc']">
-        <n-alert>
-          {{ news['item']['origin']['desc'] }}
-        </n-alert>
-      </n-space>
+      <div style="font-weight: bold" v-if="news['item']['origin']['desc']">
+              {{ news['item']['origin']['desc'] }}
+      </div>
     </template>
   </CommonNews>
 </template>
@@ -37,10 +35,9 @@ export default {
       const lists = body.data?.list || []
 
       return lists.map(news => {
-
         return {
           title: news['title'],
-          link: news['short_link'],
+          link: news['short_link_v2'],
           imgSrc: news['pic'],
           origin: news,
         }

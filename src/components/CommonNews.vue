@@ -1,11 +1,11 @@
 <template>
   <n-list hoverable clickable>
-    <n-list-item :key="item.title" v-for="(item,index) in news" align="left"
+    <n-list-item :key="item.title" v-for="(item,index) in news" style="text-align: left"
                  @click.stop="()=>openOriginLink(item['link'])">
       <template #prefix>
-        <n-space vertical style="width: 20px">
+        <n-space  style="width: 25px" justify="center">
           <slot name="prefix" :item="item" :index="index">
-            <n-text :type="index<=2?'error':'warning'" strong style="font-size: 17px">
+            <n-text :type="index<=2?'error':'warning'" strong style="font-size: 25px">
               {{ index + 1 }}
             </n-text>
           </slot>
