@@ -25,7 +25,7 @@ export default {
         const newsLinks = $('.news-item-hover')
         return newsLinks.map((_, news) => ({
               title: $(news).find('.title').text(),
-              link: news.attribs['href'],
+              link: news.attribs['data-url'],
               summary:$(news).find('.line-clamp').text(),
               extra:$(news).find('.extra .item:eq(0)').text(),
             }

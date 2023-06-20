@@ -46,13 +46,12 @@ export default {
     <n-message-provider placement="top" container-style="margin-top:50px" :duration="1500" closable>
       <n-layout position="absolute">
         <n-layout-header bordered>
-          <n-space justify="space-between" align="center" style="padding:10px 10px">
+          <n-space justify="space-between" align="center" style="padding:10px 5px">
             <n-space align="center">
               <template :key="source['name']" v-for="(source,index) in sources">
-                <n-tag round checkable @click='()=>switchSource(source)'
+                <n-tag checkable @click='()=>switchSource(source)'
                        :checked="source['name']===config.source?.name">{{ source['title'] }}
                 </n-tag>
-                <n-divider v-if="index<sources.length-1" vertical/>
               </template>
             </n-space>
             <n-space style="width: 55px" align="center">
